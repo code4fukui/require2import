@@ -1,0 +1,51 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width">
+<title>require2import helper</title>
+</head>
+<body>
+<h1>require2import helper</h1>
+<textarea id="ta" style="width:90vw;height:10em">
+const calcReportFailures = require( "./passes/calc-report-failures" );
+</textarea><br>
+<button id=cnv>convert</button>
+<script type="module">
+import * as esprima from "https://code4fukui.github.io/esprima/es/esprima.min.js";
+
+const require2import = (s) => {
+  const ast = esprima.parseScript(ta.value);
+  console.log(ast);
+  const ss = [];
+  for (const dec of ast.body) {
+    const id = dec.declarations[0].id.name;
+    const path = dec.declarations[0].init.arguments[0].value;
+    ss.push(`import { ${id} } from "${path}.js";`);
+  }
+  return ss.join("\n");
+};
+
+cnv.onclick = ta.onchange = () => {
+  ta.value = require2import(ta.value);
+};
+
+/*
+cnv.onclick = ta.onchange = () => {
+  const s = ta.value;
+  const ss = s.split("\n");
+  const ss2 = ss.map(s => {
+    let n = s.match(/const \{\s*([^\}].+)\s*\} = require\([\'\"](.+)[\'\"]\);?/);
+    if (!n) {
+      n = s.match(/const (.+) = require\([\'\"](.+)[\'\"]\);?/);
+      if (!n) {
+        return s;
+      }
+    }
+    return "import { " + n[1] + " } from \"" + n[2] + ".js\";";
+  });
+  ta.value = ss2.join("\n");
+};
+*/
+/*
+import IdentifierIssuer from './IdentifierIssuer.js';
+const MessageDigest = require('./MessageDigest');
+*/
+</script>
+
