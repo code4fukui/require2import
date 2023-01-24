@@ -17,7 +17,8 @@ const require2import = (s) => {
   for (const dec of ast.body) {
     const id = dec.declarations[0].id.name;
     const path = dec.declarations[0].init.arguments[0].value;
-    ss.push(`import { ${id} } from "${path}.js";`);
+    const path2 = path.endsWith(".js") ? path : path + ".js";
+    ss.push(`import { ${id} } from "${path2}";`);
   }
   return ss.join("\n");
 };
